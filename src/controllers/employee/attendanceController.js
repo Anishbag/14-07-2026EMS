@@ -125,3 +125,34 @@ export const checkOut = async (req, res) => {
 
 
 
+// Employee Attendance History
+export const getAttendanceHistory = async (req, res) => {
+  try {
+    const employee = await Employee.findOne({
+      userId: req.user._id,
+      isDeleted: false,
+    });
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    const attendance = await Attendance.find({
+      employee: employee._id,
+    }).sort({ date: -1 });
+
+    res.status(200).json({
+      success: true,
+      totalRecords: attendance.length,
+      attendance,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
