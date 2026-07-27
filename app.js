@@ -9,6 +9,8 @@ import testRoutes from "./src/routes/testRoutes.js";
 import employeeRoutes from "./src/routes/admin/employeeRoutes.js";
 import attendanceRoutes from "./src/routes/employee/attendanceRoutes.js";
 import adminAttendanceRouter from "./src/routes/admin/attendanceRoutes.js";
+import employeeLeaveRoutes from "./src/routes/employee/leaveRoutes.js";
+import adminLeaveRoutes from "./src/routes/admin/leaveRoutes.js";
 
 const app = express();
 
@@ -31,6 +33,8 @@ app.use("/api/test",testRoutes);
 app.use("/api/admin/employees", employeeRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/admin/attendance",adminAttendanceRouter);
+app.use("/api/leave",employeeLeaveRoutes);
+app.use("/api/admin/leave",adminLeaveRoutes);
 
 app.get("/", (req, res) => {
 
