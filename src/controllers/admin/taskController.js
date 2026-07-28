@@ -308,3 +308,20 @@ export const assignTaskToMultipleEmployees = async (req, res) => {
     });
   }
 };
+
+
+console.log("Received IDs:", employeeIds);
+
+const employees = await Employee.find({
+  _id: { $in: employeeIds },
+  isDeleted: false,
+});
+
+console.log(
+  "Found Employees:",
+  employees.map(emp => ({
+    id: emp._id.toString(),
+    employeeId: emp.employeeId,
+    isDeleted: emp.isDeleted
+  }))
+);
