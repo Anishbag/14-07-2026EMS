@@ -57,3 +57,72 @@ export const getMyTasks = async (req, res) => {
     });
   }
 };
+
+export const updateTaskStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    const allowedStatus = [
+      "Pending",
+      "In Progress",
+      "Completed",
+    ];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    
+    const employee = await Employee.findOne({
+      userId: req.user._id,
+      isDeleted: false,
+    });
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+   
+    const task = await Task.findOne({
+      _id: req.params.id,
+      assignedTo: employee._id,
+      isDeleted: false,
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found or not assigned to you",
+      });
+    }
+
+    task.status = status;
+
+    await task.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Task status updated successfully",
+      task,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
