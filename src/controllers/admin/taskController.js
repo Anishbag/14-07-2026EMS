@@ -244,3 +244,67 @@ export const deleteTask = async (req, res) => {
     });
   }
 };
+
+
+export const assignTaskToMultipleEmployees = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      employeeIds,
+      priority,
+      dueDate,
+      remarks,
+    } = req.body;
+
+    if (
+      !title ||
+      !description ||
+      !employeeIds ||
+      !employeeIds.length ||
+      !dueDate
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all required fields",
+      });
+    }
+
+    
+    const employees = await Employee.find({
+      _id: { $in: employeeIds },
+      isDeleted: false,
+    });
+
+    if (employees.length !== employeeIds.length) {
+      return res.status(404).json({
+        success: false,
+        message: "One or more employees not found",
+      });
+    }
+
+    
+    const tasks = employees.map((employee) => ({
+      title,
+      description,
+      assignedTo: employee._id,
+      assignedBy: req.user._id,
+      priority,
+      dueDate,
+      remarks,
+    }));
+
+    await Task.insertMany(tasks);
+
+    res.status(201).json({
+      success: true,
+      message: `${tasks.length} tasks assigned successfully`,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
