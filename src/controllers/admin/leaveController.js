@@ -35,3 +35,56 @@ export const getAllLeaves = async (req, res) => {
     });
   }
 };
+
+
+export const updateLeaveStatus = async (req, res) => {
+  try {
+    const { status, adminRemark } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    if (!["Approved", "Rejected"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    const leave = await Leave.findById(req.params.id);
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    if (leave.status !== "Pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Leave request already processed",
+      });
+    }
+
+    leave.status = status;
+    leave.adminRemark = adminRemark || "";
+
+    await leave.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Leave ${status.toLowerCase()} successfully`,
+      leave,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

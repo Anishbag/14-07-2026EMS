@@ -11,6 +11,8 @@ import attendanceRoutes from "./src/routes/employee/attendanceRoutes.js";
 import adminAttendanceRouter from "./src/routes/admin/attendanceRoutes.js";
 import employeeLeaveRoutes from "./src/routes/employee/leaveRoutes.js";
 import adminLeaveRoutes from "./src/routes/admin/leaveRoutes.js";
+import dashboardRoutes from "./src/routes/admin/dashboardRoutes.js"
+import taskRoutes from "./src/routes/admin/taskRoutes.js"
 
 const app = express();
 
@@ -35,6 +37,8 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/admin/attendance",adminAttendanceRouter);
 app.use("/api/leave",employeeLeaveRoutes);
 app.use("/api/admin/leave",adminLeaveRoutes);
+app.use("/api/admin/dashboard",dashboardRoutes);
+app.use("/api/admin/tasks",taskRoutes);
 
 app.get("/", (req, res) => {
 
