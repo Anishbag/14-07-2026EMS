@@ -257,6 +257,9 @@ export const assignTaskToMultipleEmployees = async (req, res) => {
       remarks,
     } = req.body;
 
+
+     console.log("Received employeeIds:", employeeIds);  ////
+
     if (
       !title ||
       !description ||
@@ -276,12 +279,26 @@ export const assignTaskToMultipleEmployees = async (req, res) => {
       isDeleted: false,
     });
 
+    ////
+     console.log(
+      "Found Employees:",
+      employees.map(emp => ({
+        _id: emp._id.toString(),
+        employeeId: emp.employeeId,
+        isDeleted: emp.isDeleted,
+      }))
+    );
+
+    ///
+
     if (employees.length !== employeeIds.length) {
       return res.status(404).json({
         success: false,
         message: "One or more employees not found",
       });
     }
+
+
 
     
     const tasks = employees.map((employee) => ({
@@ -310,18 +327,3 @@ export const assignTaskToMultipleEmployees = async (req, res) => {
 };
 
 
-console.log("Received IDs:", employeeIds);
-
-const employees = await Employee.find({
-  _id: { $in: employeeIds },
-  isDeleted: false,
-});
-
-console.log(
-  "Found Employees:",
-  employees.map(emp => ({
-    id: emp._id.toString(),
-    employeeId: emp.employeeId,
-    isDeleted: emp.isDeleted
-  }))
-);
