@@ -149,3 +149,67 @@ export const getTaskById = async (req, res) => {
     });
   }
 };
+
+
+export const updateTask = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      assignedTo,
+      priority,
+      status,
+      dueDate,
+      remarks,
+    } = req.body;
+
+    const task = await Task.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+   
+    if (assignedTo) {
+      const employee = await Employee.findOne({
+        _id: assignedTo,
+        isDeleted: false,
+      });
+
+      if (!employee) {
+        return res.status(404).json({
+          success: false,
+          message: "Employee not found",
+        });
+      }
+
+      task.assignedTo = assignedTo;
+    }
+
+    if (title) task.title = title;
+    if (description) task.description = description;
+    if (priority) task.priority = priority;
+    if (status) task.status = status;
+    if (dueDate) task.dueDate = dueDate;
+    if (remarks !== undefined) task.remarks = remarks;
+
+    await task.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      task,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
