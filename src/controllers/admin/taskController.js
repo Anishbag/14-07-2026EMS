@@ -114,3 +114,38 @@ export const getAllTasks = async (req, res) => {
     });
   }
 };
+
+
+export const getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    })
+      .populate({
+        path: "assignedTo",
+        select: "employeeId firstName lastName email department designation",
+      })
+      .populate({
+        path: "assignedBy",
+        select: "name email",
+      });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      task,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
