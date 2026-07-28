@@ -1,19 +1,16 @@
 import jwt from "jsonwebtoken";
 
 const generateToken = (id, role) => {
+  console.log("JWT_EXPIRE:", process.env.JWT_EXPIRE);
+  console.log("Type:", typeof process.env.JWT_EXPIRE);
+
   return jwt.sign(
-    {
-      id,
-      role,
-    },
+    { id, role },
     process.env.JWT_SECRET,
     {
-      expiresIn: process.env.JWT_EXPIRE,
+      expiresIn: "7d", // Hardcode
     }
   );
 };
 
 export default generateToken;
-
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
-console.log("JWT_EXPIRE:", process.env.JWT_EXPIRE);
