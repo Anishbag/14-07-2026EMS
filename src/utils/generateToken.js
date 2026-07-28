@@ -14,3 +14,6 @@ const generateToken = (id, role) => {
 };
 
 export default generateToken;
+
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("JWT_EXPIRE:", process.env.JWT_EXPIRE);
